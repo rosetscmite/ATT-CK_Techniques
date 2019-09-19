@@ -41,7 +41,7 @@ regsvr32 /s /n /u /i:<aa.sct> scrobj.dll
 
 ### 结果验证
 
-![1568433329432](C:\Users\scmite\Desktop\T1117-Regsvr32.assets\1568433329432.png)
+![1568433329432](.\T1117-Regsvr32.assets\1568433329432.png)
 
 
 
@@ -84,13 +84,13 @@ regsvr32 /s /n /u /i:<aa.sct> scrobj.dll
 
 ### 结果验证
 
-![1568438662858](C:\Users\scmite\Desktop\T1117-Regsvr32.assets\1568438662858.png)
+![1568438662858](.\T1117-Regsvr32.assets\1568438662858.png)
 
 此时在注册表可以看见注册的COM对象
 
-![1568438770222](C:\Users\scmite\Desktop\T1117-Regsvr32.assets\1568438770222.png)
+![1568438770222](.\T1117-Regsvr32.assets\1568438770222.png)
 
-![1568438841369](C:\Users\scmite\Desktop\T1117-Regsvr32.assets\1568438841369.png)
+![1568438841369](.\T1117-Regsvr32.assets\1568438841369.png)
 
 ## 相关知识
 
@@ -110,6 +110,59 @@ regsvr32 /s /n /u /i:<aa.sct> scrobj.dll
 
 
 ## 威胁取证
+
+**命令行特征：**（级别：高）
+
+```
+# 不管是本地还是远程调用，都必须要关键字regsvr32，\i，scrobj.dll
+eventid = 1 AND cmdline regex regsvr32\s+.*\i:.*?\s+scrobj.dll
+```
+
+![1568551600493](./T1117-Regsvr32.assets/1568551600493.png)
+
+
+
+**加载项特征：**（级别：高）
+
+```
+# 在执行scriptlet是会使用Jscript或者vbscript脚本，这样系统就会调用脚本程序
+eventid = 7 AND ImageLoaded contains ('jscript' OR 'vbscript')
+```
+
+![1568551788061](./T1117-Regsvr32.assets/1568551788061.png)
+
+
+
+验证vbscript作为payload确认会调用
+
+```
+<?XML version="1.0"?>
+<scriptlet>
+<registration
+  progid="TESTING"
+  classid="{A1112221-0000-0000-3000-000DA00DABFC}" >
+  <script language="vbscript">
+    <![CDATA[
+      set foo = createobject("WScript.Shell")
+      foo.Run("cmd.exe /c calc.exe")
+    ]]>
+</script>
+</registration>
+</scriptlet>
+```
+
+![1568553045254](./T1117-Regsvr32.assets/1568553045254.png)
+
+
+
+进程特征：（级别：中）
+
+```
+# 当regsvr32作为父进程创建其他程序时是一种可疑行为
+ParentImage contians 'regsvr32.exe'
+```
+
+![1568553894651](./T1117-Regsvr32.assets/1568553894651.png)
 
 
 
