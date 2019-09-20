@@ -76,3 +76,12 @@ eventid = 7 AND ImageLoaded contains 'jscript'
 ```
 
 ![1568900621786](T1223-Compiled HTML File.assets/1568900621786.png)
+
+
+
+## 参考
+
+https://attack.mitre.org/techniques/T1223/
+
+https://www.cnblogs.com/ssooking/articles/6171247.html
+
