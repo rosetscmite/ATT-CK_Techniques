@@ -6,7 +6,7 @@ Regsvr32.exe是一个命令行程序，用于在Windows系统上注册和取消�
 
 Regsvr32.exe还可用于专门绕过进程白名单，使用功能加载COM scriptlet以在用户权限下执行DLL。由于regsvr32.exe具有网络功能，因此可以调用远程脚本来执行代码。
 
-## 远程命令执行
+## 命令执行
 
 ```
 读取远程payload执行
